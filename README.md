@@ -31,7 +31,13 @@ yoloForXz/
 ### 1. 安装Python依赖
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirementsCpu.txt
+```
+
+或者
+
+```bash
+pip install -r requirementsGpu.txt
 ```
 
 **注意**: 
@@ -286,6 +292,23 @@ model.export(format='onnx')
 ## 联系方式
 
 如有问题，请提交Issue或联系项目维护者。
+
+如何一次性把「GPU 版 torch」写进依赖文件
+方法 A：在 requirements.txt 里指定 CUDA 源
+Text
+复制
+--extra-index-url https://download.pytorch.org/whl/cu121
+torch==2.5.1+cu121
+torchvision==0.20.1+cu121
+其余包照常列即可。
+方法 B：分两条命令（推荐）
+bash
+复制
+# 先装 GPU 版 torch 三件套
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+# 再装剩余依赖
+pip install -r requirements.txt
+这样不会重复卸载/重装，速度最快。
 
 
 
