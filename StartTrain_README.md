@@ -1,40 +1,55 @@
-# StartTrain.py - YOLO训练一体化脚本
-
-## 功能特性
-
-✅ **自动GPU/CPU检测** - 智能选择最佳训练设备  
-✅ **数据集自动准备** - 将原始数据转换为YOLO格式  
-✅ **完整训练流程** - 从数据准备到模型输出一站式完成  
-✅ **模型文件管理** - 自动创建带时间戳的输出目录，避免覆盖  
-✅ **ONNX格式导出** - 可选的模型格式转换  
-✅ **丰富的配置选项** - 支持命令行参数自定义所有训练参数  
+# starttrain.py - YOLO训练一体化脚本
 
 ## 快速开始
 
 ### 基础使用
 ```bash
 # 使用默认配置训练
-python StartTrain.py --source-dir project-6-at-2025-10-29-15-54-bac1d4f3
+python StartTrain.py --source-dir 你解压之后的文件夹路径
 
 # 指定训练轮数
-python StartTrain.py --source-dir project-6-at-2025-10-29-15-54-bac1d4f3 --epochs 200
+python StartTrain.py --source-dir 你解压之后的文件夹路径 --epochs 200
 
 # 启用ONNX导出
-python StartTrain.py --source-dir project-6-at-2025-10-29-15-54-bac1d4f3 --export-onnx
+python StartTrain.py --source-dir 你解压之后的文件夹路径 --export-onnx
+
+#等等其他参数可以自定义配置
+#具体使用方式可以参考 example_usage.py和trainyolo.py
 ```
 
-### 完整配置示例
+### 完整配置和使用示例
 ```bash
-python StartTrain.py \
-  --source-dir project-6-at-2025-10-29-15-54-bac1d4f3 \
-  --data-dir datasets \
-  --epochs 200 \
-  --batch-size 32 \
-  --model-size yolo11s.pt \
-  --export-onnx \
-  --experiment-name checkpoint_detection \
-  --learning-rate 0.01 \
-  --cosine-lr
+from starttrain import start_train
+
+if __name__ == '__main__':
+    success3 = start_train(
+        source_dir='project-6-at-2025-10-29-15-54-bac1d4f3', # label studio 解压之后的文件夹地址
+        data_dir='datasets', # 将source_dir转换成数据集目录的保存目录
+        prepare_data=True,# 是否需要准备数据集(如果source_dir已经是数据集目录，则不需要，如果是labelstudio解压之后的数据，则需要)
+        epochs=100, # 训练轮次
+        batch_size=16, # 批次大小
+        experiment_name='my_test', # 实验名称
+        resume_from=None, # 从哪个模型的基础上进行训练，如果没有就按照默认model_dize(默认是yolo11n.pt)进行训练
+        experiment_name='my_test', # 实验名称
+        model_output_dir='Model', # 模型输出目录
+        use_timestamp=True, # 是否使用时间戳作为实验名称
+        export_onnx=False, # 是否导出onnx
+        force_cpu=False, # 是否强制使用CPU(默认使用GPU)
+        image_size=640, # 图片尺寸
+        learning_rate=0.01, # 学习率
+        workers=8, # 线程数
+    )
+
+    print(f"\n📊 训练结果:")
+    print(f"  结果: {'✅成功' if success3['success'] else '❌失败'}")
+    
+    # 打印模型保存路径
+    print(f"\n📁 模型保存位置:")  
+    print(f"  模型: {success3['model_dir']}")
+    print(f"  最佳模型: {success3['best_model']}")
+    if success3['onnx_model']:
+        print(f"  ONNX模型: {success3['onnx_model']}")
+
 ```
 
 ## 参数说明
@@ -100,7 +115,7 @@ Model/
 
 ## 执行流程
 
-1. **🔍 设备检测**: 自动检测GPU可用性，选择最佳训练设备
+1. **🔍 设备检测**: 自动检测GPU可用性，有独显默认使用gpu
 2. **📊 数据准备**: 将原始数据集转换为YOLO训练格式
 3. **🚀 模型训练**: 使用指定参数训练YOLO模型
 4. **📦 模型导出**: 保存训练结果到Model文件夹
@@ -121,38 +136,3 @@ Model/
 2. **"源数据目录不存在"**: 检查 `--source-dir` 参数是否正确
 3. **"未找到任何图像文件"**: 确认images/文件夹中有jpg/png格式的图像
 4. **"数据配置文件不存在"**: 确认数据准备步骤已成功完成
-
-### 查看训练详情
-训练完成后，可以在输出目录中查看：
-- `results.png`: 训练曲线图
-- `confusion_matrix.png`: 混淆矩阵
-- `train/weights/best.pt`: 最佳模型权重
-- 详细日志文件
-
-## 示例用法
-
-### 场景1: 快速训练测试
-```bash
-python StartTrain.py --source-dir project-6-at-2025-10-29-15-54-bac1d4f3 --epochs 50 --batch-size 8
-```
-
-### 场景2: 高质量训练
-```bash
-python StartTrain.py \
-  --source-dir project-6-at-2025-10-29-15-54-bac1d4f3 \
-  --epochs 300 \
-  --batch-size 32 \
-  --model-size yolo11m.pt \
-  --cosine-lr \
-  --export-onnx \
-  --experiment-name high_quality_model
-```
-
-### 场景3: CPU训练（无GPU环境）
-```bash
-python StartTrain.py \
-  --source-dir project-6-at-2025-10-29-15-54-bac1d4f3 \
-  --force-cpu \
-  --batch-size 4 \
-  --workers 2
-```
