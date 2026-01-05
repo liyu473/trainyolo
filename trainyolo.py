@@ -7,12 +7,11 @@ if __name__ == '__main__':
         prepare_data=True,# 是否需要准备数据集(如果source_dir已经是数据集目录，则不需要，如果是labelstudio解压之后的数据，则需要)
         epochs=100, # 训练轮次
         batch_size=16, # 批次大小
-        experiment_name='my_test', # 实验名称
         resume_from=None, # 从哪个模型的基础上进行训练，如果没有就按照默认model_dize(默认是yolo11n.pt)进行训练
         experiment_name='my_test', # 实验名称
-        model_output_dir='Model', # 模型输出目录
+        model_output_dir='models', # 模型输出目录
         use_timestamp=True, # 是否使用时间戳作为实验名称
-        export_onnx=False, # 是否导出onnx
+        export_onnx=True, # 是否导出onnx
         force_cpu=False, # 是否强制使用CPU(默认使用GPU)
         image_size=640, # 图片尺寸
         learning_rate=0.01, # 学习率
