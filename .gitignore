@@ -39,19 +39,17 @@ venv.bak/
 runs/
 weights/*.pt
 !weights/.gitkeep
-models/*.pt
 *.weights
 *.onnx
 *.engine
 *.tflite
 *.mlmodel
 
-# Datasets (如果数据集很大，建议忽略)
-datasets/images/
-datasets/labels/
-# 保留配置文件
-!datasets/data.yaml
-!datasets/.gitkeep
+# Datasets
+datasets/
+
+# Models
+models/
 
 # 日志和缓存
 *.log
